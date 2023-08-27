@@ -1,0 +1,21 @@
+{
+  "name": "vk-api",
+  "version": "1.0.0",
+  "main": "./src/vkAPI.js",
+  "type": "module",
+  "sideEffects": true,
+  "scripts": {
+    "start": "node ./src/vkAPI.js"
+  },
+  "keywords": ["vk"],
+  "dependencies": {
+    "node-fetch": "^3.3.1"
+  },
+  "devDependencies": {},
+  "author": "Ma11y1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ma11y1/vk-api"
+  }
+}
