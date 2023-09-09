@@ -1,2 +1,4 @@
-export * from "./user/index.js";
-export * from "./group/index.js";
+export * from "./types/index.js";
+export * from "./methodGroupType.js";
+export * from "./methodAccount.js";
+export * from "./methodMessages.js";

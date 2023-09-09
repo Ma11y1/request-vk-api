@@ -1,33 +1,42 @@
-import fetch from "node-fetch";
-import {REQUEST_ABORT_TIMEOUT} from "./constants.js";
+import https from "https";
 
 
-export async function request(url, params = {}) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_ABORT_TIMEOUT);
+function doRequest(url, params, postData) {
+    return new Promise((resolve, reject) => {
+        const request = https.request(url, params, (response) => {
+            response.setEncoding("utf-8");
+            let data = "";
+            response.on("data", (chunk) => data += chunk);
+            response.on("end", () => resolve(data));
+        });
 
-    params.signal = controller.signal;
-    params.compress = false;
+        request.on("error", reject);
 
-    try {
-        return await fetch(url, params);
-    } finally {
-        clearTimeout(timeout);
+        if(postData) request.write(postData);
+
+        request.end();
+    });
+}
+
+export class Request {
+
+    static get(url, params = {}) {
+        if(!url) throw new Error(`Invalid argument URL: ${url}`);
+        console.log(url)
+        params.method = "GET";
+
+        return doRequest(url, params);
     }
-}
 
-export async function requestText(url, params = {}) {
-    return (await request(url, params)).text()
-}
+    static async getJSON(url, params = {}) {
+        return JSON.parse(await Request.get(url, params));
+    }
 
-export async function requestJSON(url, params = {}) {
-    return (await request(url, params)).json()
-}
+    static post(url, params = {}, postData) {
+        if(!url) throw new Error(`Invalid argument URL: ${url}`);
 
-export async function requestBlob(url, params = {}) {
-    return (await request(url, params)).blob()
-}
+        params.method = "POST";
 
-export async function requestArrayBuffer(url, params = {}) {
-    return (await request(url, params)).arrayBuffer()
+        return doRequest(url, params, postData);
+    }
 }

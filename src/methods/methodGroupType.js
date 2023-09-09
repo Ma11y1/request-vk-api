@@ -46,7 +46,7 @@
     WALL: "wall",
     WIDGETS: "widget"
 } } */
-export const methodGroupType = {
+export const METHOD_GROUP_TYPE = {
     NONE: "none",
     ACCOUNT: "account",
     ADS: "ads",
