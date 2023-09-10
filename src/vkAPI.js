@@ -1,14 +1,11 @@
-import {VERSION_API, TOKEN} from "./constants.js";
-import {VKSession} from "./vkSession.js";
-import * as https from "https";
-import {Request} from "./request.js";
-
+import {VERSION_API} from "./constants.js";
 
 
 //TODO Реализовать работу с Long Poll API
 //TODO Реализовать работу с ботом
-//TODO Переделать request на работу через https
 
+//TODO Доделать обработку ошибок
+//TODO Дописать енум коды ошибок
 export class VKAPI {
     static version = VERSION_API;
 
@@ -35,5 +32,4 @@ export class VKAPI {
 
     }
 }
-
 

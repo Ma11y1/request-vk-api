@@ -1,26 +1,10 @@
-export const requestErrorCode = {
-    "1": "Unknown error request",
-    "2": "App is off. Need on app in settings https://vk.com/editapp?id={Your API_ID} or use test mode (test_mode=1)"
-}
+export const METHOD_API_ERROR_CODE = {
+    UNKNOWN_METHOD: 3,
+    INVALID_SIGNATURE: 4,
 
-export const INTERNAL_ERROR_CODE = {
-    UNDEFINED_HANDLER: "UNDEFINED_HANDLER"
-}
-
-export const AUTH_ERROR_CODE = {
-    PAGE_BLOCKED:                       "PAGE_BLOCKED",
-    INVALID_PHONE_NUMBER:               "INVALID_PHONE_NUMBER",
-    AUTHORIZATION_FAILED:               "AUTHORIZATION_FAILED",
-    FAILED_PASSED_CAPTCHA:              "FAILED_PASSED_CAPTCHA",
-    FAILED_PASSED_TWO_FACTOR:           "FAILED_PASSED_TWO_FACTOR",
-    USERNAME_OR_PASSWORD_IS_INCORRECT:  "USERNAME_OR_PASSWORD_IS_INCORRECT",
-    TOO_MUCH_TRIES:                     "TOO_MUCH_TRIES",
-    WRONG_OTP:                          "WRONG_OTP",
-    OTP_FORMAT_IS_INCORRECT:            "OTP_FORMAT_IS_INCORRECT"
-}
-
-export const METHOD_ERROR_CODE = {
-
+    CAPTCHA_NEEDED: 14,
+    VALIDATION_REQUIRED: 17,
+    CONFIRMATION_REQUIRED: 24
 }
 
 //     3

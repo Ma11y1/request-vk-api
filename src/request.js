@@ -22,7 +22,7 @@ export class Request {
 
     static get(url, params = {}) {
         if(!url) throw new Error(`Invalid argument URL: ${url}`);
-        console.log(url)
+
         params.method = "GET";
 
         return doRequest(url, params);

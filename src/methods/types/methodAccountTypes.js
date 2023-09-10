@@ -1,4 +1,4 @@
-export const TYPES_METHOD_ACCOUNT = Object.freeze({
+export const METHOD_ACCOUNT_TYPES = Object.freeze({
     BAN: "ban",
     CHANGE_PASSWORD: "changePassword",
     GET_ACTIVE_OFFERS: "getActiveOffers",

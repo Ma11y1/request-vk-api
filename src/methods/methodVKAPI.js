@@ -1,72 +1,62 @@
 import {METHOD_GROUP_TYPE} from "./methodGroupType.js";
-import {API_URL_METHODS, VERSION_API} from "../constants.js";
+import {API_URL_METHODS} from "../constants.js";
 import {Request} from "../request.js";
+import {
+    ErrorAPI,
+    ErrorCaptchaNeeded,
+    ErrorConfirmationRequired,
+    ErrorValidationRequired,
+    METHOD_API_ERROR_CODE
+} from "../errors/index.js";
 
 
 export class MethodVKAPI {
-    static _groupType = METHOD_GROUP_TYPE.NONE;
-    static types = null;
-
-    constructor(version = VERSION_API) {
-        this._version = version;
-    }
-
     /**
-     * @param {session: VKSession, group: string, method: string, language: number | LANGUAGE_API, params: Object }
-     * @return {Promise<String>}
-     */
-    async call({session, group, method, language, params = {}}) {
-        return MethodVKAPI.call({session, group, method, language, params});
-    }
-
-    /**
-     * @param {session: VKSession, group: string, method: string, language: number | LANGUAGE_API, params: Object }
+     * @param {VKSession} session
+     * @param {group: string, method: string, language: number | LANGUAGE_API, version: string, searchParams: Object, requestParams: Object }
      * @return {Promise<Object>}
      */
-    async callJSON({session, group, method, language, params = {}}) {
-        return MethodVKAPI.callJSON({session, group, method, language, params});
-    }
+    static async call(session, {group, method, language, version, searchParams, requestParams = {}}) {
+        requestParams.agent = session;
+        requestParams.timeout = session.timeout;
 
-    /**
-     * @param {session: VKSession, group: string, method: string, language: number | LANGUAGE_API, params: Object }
-     * @return {Promise<String>}
-     */
-    static async call({session, group, method, language, params = {}}) {
-        params.agent = session;
-        params.timeout = session.timeout;
+        const url = `${API_URL_METHODS}/${group}.${method}?`;
+        searchParams = new URLSearchParams({
+            v: version || session.version,
+            lang: language || session.language,
+            ...searchParams
+        });
 
-        return await Request.get(
-            `${API_URL_METHODS}/${group || MethodVKAPI._groupType}.${method}?v=${session.version || VERSION_API}&access_token=${session.token}&lang=${language || session.language}`,
-            params
-        );
-    }
+        if(session.isHeaderBearerToken) {
+            requestParams.headers = {
+                Authorization: `Bearer ${session.token}`
+            };
+        }else {
+            searchParams.set("access_token", session.token);
+        }
 
-    /**
-     * @param {session: VKSession, group: string, method: string, language: number | LANGUAGE_API, params: Object }
-     * @return {Promise<String>}
-     */
-    static async callJSON({session, group, method, language, params = {}}) {
-        params.agent = session;
-        params.timeout = session.timeout;
-
-        return await Request.getJSON(
-            `${API_URL_METHODS}/${group || MethodVKAPI._groupType}.${method}?v=${session.version || VERSION_API}&access_token=${session.token}&lang=${language || session.language}`,
-            params
-        );
+        return Request.getJSON(url, requestParams).then((result) => {
+            if(result.error) {
+                result = result.error;
+                switch (result.error_code) {
+                    case METHOD_API_ERROR_CODE.CAPTCHA_NEEDED: {
+                        throw new ErrorCaptchaNeeded(result.error_code, result.error_msg, result.request_params, result.captcha_sid, result.captcha_img);
+                    }
+                    case METHOD_API_ERROR_CODE.VALIDATION_REQUIRED: {
+                        throw new ErrorValidationRequired(result.error_code, result.error_msg, result.request_params, result.redirect_uri);
+                    }
+                    case METHOD_API_ERROR_CODE.CONFIRMATION_REQUIRED: {
+                        throw new ErrorConfirmationRequired(result.error_code, result.error_msg, result.request_params, result.confirmation_text);
+                    }
+                    default: throw new ErrorAPI(result.error_code, result.error_msg, result.request_params);
+                }
+            }
+            return result;
+        });
     }
 
     /** @return { METHOD_GROUP_TYPE, string } */
     static get groupType() {
         return this._groupType;
-    }
-
-    /** @return { boolean } */
-    get isMethodVKAPI() {
-        return true;
-    }
-
-    /** @return { string } */
-    get version() {
-        return this._version;
     }
 }

@@ -1,9 +1,10 @@
 export class ErrorAPI extends Error {
 
-    constructor({ code, message }) {
+    constructor(code, message, requestParams) {
         super(message);
-
+        this.isErrorAPI = true;
         this.code = code;
+        this.requestParams = requestParams;
         this.name = this.constructor.name;
     }
 
