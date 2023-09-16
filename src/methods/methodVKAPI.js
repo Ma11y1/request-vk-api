@@ -1,4 +1,3 @@
-import {METHOD_GROUP_TYPE} from "./methodGroupType.js";
 import {API_URL_METHODS} from "../constants.js";
 import {Request} from "../request.js";
 import {
@@ -53,10 +52,5 @@ export class MethodVKAPI {
             }
             return result;
         });
-    }
-
-    /** @return { METHOD_GROUP_TYPE, string } */
-    static get groupType() {
-        return this._groupType;
     }
 }

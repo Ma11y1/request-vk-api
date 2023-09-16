@@ -1,7 +1,6 @@
-import {VERSION_API, LANGUAGE_API, REQUEST_TIMEOUT} from "./constants.js";
 import {Agent} from "https";
-import {MethodVKAPI} from "./methods/methodVKAPI.js";
-import {METHOD_GROUP_TYPE, METHOD_ACCOUNT_TYPES} from "./methods/index.js";
+import {VERSION_API, LANGUAGE_API, REQUEST_TIMEOUT} from "./constants.js";
+import {MethodVKAPI, METHOD_GROUP_TYPE, METHOD_ACCOUNT_TYPES} from "./methods/index.js";
 
 
 export class VKSession extends Agent {
@@ -106,11 +105,11 @@ export class VKSession extends Agent {
             });
     }
 
-    async callMethod(method, params) {
+    processCaptcha(sid, key) {
 
     }
 
-    async isValid() {
+    async callMethod(method, params) {
 
     }
 
