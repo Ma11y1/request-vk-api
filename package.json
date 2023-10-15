@@ -7,9 +7,12 @@
   "scripts": {
     "start": "node ./src/vkAPI.js"
   },
-  "keywords": ["vk"],
-  "dependencies": {},
-  "devDependencies": {},
+  "keywords": [
+    "vk"
+  ],
+  "dependencies": {
+    "form-data": "^4.0.0"
+  },
   "author": "Ma11y1",
   "license": "MIT",
   "repository": {

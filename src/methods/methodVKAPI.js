@@ -1,12 +1,5 @@
 import {API_URL_METHODS} from "../constants.js";
 import {Request} from "../request.js";
-import {
-    ErrorAPI,
-    ErrorCaptchaNeeded,
-    ErrorConfirmationRequired,
-    ErrorValidationRequired,
-    METHOD_API_ERROR_CODE
-} from "../errors/index.js";
 
 
 export class MethodVKAPI {
@@ -15,42 +8,55 @@ export class MethodVKAPI {
      * @param {group: string, method: string, language: number | LANGUAGE_API, version: string, searchParams: Object, requestParams: Object }
      * @return {Promise<Object>}
      */
-    static async call(session, {group, method, language, version, searchParams, requestParams = {}}) {
-        requestParams.agent = session;
+    static async call(session, {group, method, language, version, queryParams, requestParams}) {
+        if(!requestParams) requestParams = {};
+
+        requestParams.agent = session.agent;
         requestParams.timeout = session.timeout;
 
-        const url = `${API_URL_METHODS}/${group}.${method}?`;
-        searchParams = new URLSearchParams({
+        queryParams = new URLSearchParams({
             v: version || session.version,
             lang: language || session.language,
-            ...searchParams
+            ...queryParams
         });
 
-        if(session.isHeaderBearerToken) {
+        if (session.isHeaderBearerToken) {
             requestParams.headers = {
                 Authorization: `Bearer ${session.token}`
             };
-        }else {
-            searchParams.set("access_token", session.token);
+        } else {
+            queryParams.set("access_token", session.token);
+        }
+        const url = `${API_URL_METHODS}/${group}.${method}?${queryParams.toString()}`;
+
+        return Request.getJSON(url, requestParams);
+    }
+
+    /**
+     * @param {VKSession} session
+     * @param {group: string, method: string, language: number | LANGUAGE_API, version: string, searchParams: Object, requestParams: Object }
+     * @return {Promise<Object>}
+     */
+    static async callByFormData(session, {group, method, language, version, queryParams, requestParams}) {
+        if(!requestParams) requestParams = {};
+
+        requestParams.agent = session.agent;
+        requestParams.timeout = session.timeout;
+
+        queryParams = {
+            lang: language || session.language,
+            ...queryParams
         }
 
-        return Request.getJSON(url, requestParams).then((result) => {
-            if(result.error) {
-                result = result.error;
-                switch (result.error_code) {
-                    case METHOD_API_ERROR_CODE.CAPTCHA_NEEDED: {
-                        throw new ErrorCaptchaNeeded(result.error_code, result.error_msg, result.request_params, result.captcha_sid, result.captcha_img);
-                    }
-                    case METHOD_API_ERROR_CODE.VALIDATION_REQUIRED: {
-                        throw new ErrorValidationRequired(result.error_code, result.error_msg, result.request_params, result.redirect_uri);
-                    }
-                    case METHOD_API_ERROR_CODE.CONFIRMATION_REQUIRED: {
-                        throw new ErrorConfirmationRequired(result.error_code, result.error_msg, result.request_params, result.confirmation_text);
-                    }
-                    default: throw new ErrorAPI(result.error_code, result.error_msg, result.request_params);
-                }
-            }
-            return result;
-        });
+        let url = `${API_URL_METHODS}/${group}.${method}?v=${version || session.version}`;
+        if (session.isHeaderBearerToken) {
+            requestParams.headers = {
+                Authorization: `Bearer ${session.token}`
+            };
+        } else {
+            url += `&access_token=${session.token}`;
+        }
+
+        return Request.postFormData(url, requestParams, queryParams);
     }
 }

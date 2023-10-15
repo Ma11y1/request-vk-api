@@ -1,12 +1,6 @@
-import {VERSION_API} from "./constants.js";
+import { VERSION_API } from "./constants.js";
 
 
-//TODO Реализовать работу с Long Poll API
-//TODO Реализовать работу с ботом
-
-//TODO Доделать обработку ошибок
-//TODO Дописать енум коды ошибок
-//TODO Сделать обработку капчи в сессии
 export class VKAPI {
     static version = VERSION_API;
 
@@ -33,4 +27,3 @@ export class VKAPI {
 
     }
 }
-
