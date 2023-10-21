@@ -11,8 +11,12 @@ import {MethodVKAPI, METHOD_GROUP_TYPE} from "./methods/index.js";
 import EventEmitter from "events";
 import {ErrorAPI, METHOD_API_ERROR_CODE} from "./errors/index.js";
 import {NeedCaptcha, NeedConfirmation, NeedValidation} from "./response/index.js";
-import {LongPoolServer} from "./longPoolServer.js";
 
+
+const E_NEED_CAPTCHA = "needCaptcha";
+const E_NEED_VALIDATION = "needValidation";
+const E_NEED_CONFIRMATION = "needConfirmation";
+const E_CHANGE_LONG_POOL = "changeLongPool";
 
 export class VKSession extends EventEmitter {
 
@@ -129,17 +133,17 @@ export class VKSession extends EventEmitter {
                     switch (response.error_code) {
                         case METHOD_API_ERROR_CODE.CAPTCHA_NEEDED: {
                             const needCaptcha = new NeedCaptcha(this, group, method, queryParams, requestParams, response);
-                            this.emit("needCaptcha", needCaptcha);
+                            this.emit(E_NEED_CAPTCHA, needCaptcha);
                             return needCaptcha;
                         }
                         case METHOD_API_ERROR_CODE.VALIDATION_REQUIRED: {
                             const needValidation = new NeedValidation(this, group, method, queryParams, requestParams, response);
-                            this.emit("needValidation", needValidation);
+                            this.emit(E_NEED_VALIDATION, needValidation);
                             return needValidation;
                         }
                         case METHOD_API_ERROR_CODE.CONFIRMATION_REQUIRED: {
                             const needConfirmation = new NeedConfirmation(this, group, method, queryParams, requestParams, response);
-                            this.emit("needConfirmation", needConfirmation);
+                            this.emit(E_NEED_CONFIRMATION, needConfirmation);
                             return needConfirmation;
                         }
                         default:
@@ -179,12 +183,6 @@ export class VKSession extends EventEmitter {
         return !!this._longPoolServer;
     }
 
-    set token(value) {
-        if (!value || typeof value !== "string") return;
-        this._token = value;
-        this._isInit = false;
-    }
-
     set agent(value) {
         if (!(value instanceof Agent)) return;
         this._agent = value;
@@ -194,5 +192,11 @@ export class VKSession extends EventEmitter {
         if (typeof value === "string") value = LANGUAGE_API.getByName(value);
         if (!LANGUAGE_API.isValid(value)) return;
         this._language = value;
+    }
+
+    set longPoolServer(value) {
+        if(!value.isLongPoolServer) return;
+        this._longPoolServer = value;
+        this.emit(E_CHANGE_LONG_POOL, value);
     }
 }

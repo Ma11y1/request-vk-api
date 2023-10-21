@@ -5,11 +5,11 @@ import { METHOD_GROUP_TYPE } from "./methods/index.js";
 import { ErrorAPI, METHOD_API_ERROR_CODE } from "./errors/index.js";
 
 
-const EVENT_CONNECT = "connect";
-const EVENT_DISCONNECT = "disconnect"
-const EVENT_UPDATE = "update";
-const EVENT_UPDATE_SERVER = "updateServer";
-const EVENT_ERROR = "error";
+const E_CONNECT = "connect";
+const E_DISCONNECT = "disconnect"
+const E_UPDATE = "update";
+const E_UPDATE_SERVER = "updateServer";
+const E_ERROR = "error";
 
 /**
  * Events:
@@ -23,6 +23,7 @@ export class LongPoolServer extends EventEmitter {
 
     constructor(session) {
         super();
+        this.isLongPoolServer = true;
         this._session = session;
         this._abortController = new AbortController();
 
@@ -40,6 +41,8 @@ export class LongPoolServer extends EventEmitter {
         this.isAutoReconnect = true;
         this._isConnected = false;
         this._isInit = false;
+
+        session.longPoolServer = this;
     }
 
     /**
@@ -103,7 +106,7 @@ export class LongPoolServer extends EventEmitter {
             this._key = server.response.key;
             this._ts = server.response.ts;
 
-            this.emit(EVENT_UPDATE_SERVER, this);
+            this.emit(E_UPDATE_SERVER, this);
         } else {
             throw new ErrorAPI(METHOD_API_ERROR_CODE.INIT_LONG_POOL_SERVER, `Error update long pool server. Invalid params server: ${ server }`, {});
         }
@@ -116,7 +119,7 @@ export class LongPoolServer extends EventEmitter {
     async connect() {
         if(!this.isConnected) {
             this._isConnected = true;
-            this.emit(EVENT_CONNECT, this);
+            this.emit(E_CONNECT, this);
         }
 
         let response;
@@ -129,8 +132,8 @@ export class LongPoolServer extends EventEmitter {
             );
         } catch(err) {
             this._isConnected = false;
-            this.emit(EVENT_ERROR, err, this);
-            this.emit(EVENT_DISCONNECT, this);
+            this.emit(E_ERROR, err, this);
+            this.emit(E_DISCONNECT, this);
             return;
         }
 
@@ -147,24 +150,24 @@ export class LongPoolServer extends EventEmitter {
                     if(this.isAutoReconnect) {
                         this.connect();
                     } else {
-                        this.emit(EVENT_DISCONNECT, this);
+                        this.emit(E_DISCONNECT, this);
                     }
                     break;
                 }
                 case 4: {
                     this._isConnected = false;
-                    this.emit(EVENT_DISCONNECT, this);
+                    this.emit(E_DISCONNECT, this);
                     break;
                 }
             }
 
-            this.emit(EVENT_ERROR, response);
+            this.emit(E_ERROR, response);
         }
 
         if(response.updates) {
             this._ts = response.ts;
 
-            this.emit(EVENT_UPDATE, response.updates, this);
+            this.emit(E_UPDATE, response.updates, this);
 
             if(this.isAutoReconnect) {
                 this.connect();
@@ -177,7 +180,7 @@ export class LongPoolServer extends EventEmitter {
      */
     disconnect() {
         this._abortController.abort();
-        this.emit(EVENT_DISCONNECT, this);
+        this.emit(E_DISCONNECT, this);
     }
 
     set wait(value) {
