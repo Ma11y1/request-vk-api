@@ -1,5 +1,5 @@
 {
-  "name": "vk-api",
+  "name": "request-vk-api",
   "version": "1.0.0",
   "main": "./src/vkAPI.js",
   "type": "module",
@@ -8,7 +8,8 @@
     "start": "node ./src/vkAPI.js"
   },
   "keywords": [
-    "vk"
+    "vk",
+    "api"
   ],
   "dependencies": {
     "form-data": "^4.0.0"

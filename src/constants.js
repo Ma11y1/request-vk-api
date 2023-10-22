@@ -4,7 +4,7 @@ export const API_URL_METHODS = "https://api.vk.com/method";
 
 export const REQUEST_TIMEOUT = 10000;
 
-export const LANGUAGE_API = {
+export const LANGUAGE = {
     NONE: -1,
     DEFAULT: 0,
     RUSSIA: 0,
@@ -77,6 +77,38 @@ export const PROFILE_INFO_BDATE_VISIBLE = {
     }
 }
 
+export const ACCESS_RIGHTS_USER = {
+    NOTIFY: 1 << 0,
+    FRIENDS: 1 << 1,
+    PHOTOS: 1 << 2,
+    AUDIO: 1 << 3,
+    VIDEO: 1 << 4,
+    STORIES: 1 << 6,
+    PAGES: 1 << 7,
+    MENU: 1 << 8,
+    STATUS: 1 << 10,
+    NOTES: 1 << 11,
+    MESSAGES: 1 << 12,
+    WALL: 1 << 13,
+    ADS: 1 << 15,
+    OFFLINE: 1 << 16,
+    DOCS: 1 << 17,
+    GROUP: 1 << 18,
+    NOTIFICATIONS: 1 << 19,
+    STATS: 1 << 20,
+    EMAIL: 1 << 22,
+    MARKET: 1 << 27,
+    PHONE_NUMBER: 1 << 287
+}
+
+export const ACCESS_RIGHTS_GROUP = {
+    STORIES: 1 << 0,
+    PHOTOS: 1 << 2,
+    APP_WIDGETS: 1 << 6,
+    MESSAGES: 1 << 12,
+    DOCS: 1 << 17,
+    MANAGE: 1 << 18
+}
 
 // LongPool Server
 export const LONG_POOL_WAIT = 25;

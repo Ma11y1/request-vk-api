@@ -1,7 +1,7 @@
 import {Agent} from "https";
 import {
     VERSION_API,
-    LANGUAGE_API,
+    LANGUAGE,
     REQUEST_TIMEOUT,
     PROFILE_INFO_SEX,
     PROFILE_INFO_RELATION,
@@ -57,7 +57,7 @@ export class VKSession extends EventEmitter {
         this.relation = PROFILE_INFO_RELATION.NONE; // family status
         this.homeTown = null;
         this.photo = null;
-        this._language = language || LANGUAGE_API.RUSSIA;
+        this._language = language || LANGUAGE.RUSSIA;
         this.isServiceAccount = false;
         this.isESIAVerified = false;
         this.isESIALinked = false;
@@ -120,6 +120,8 @@ export class VKSession extends EventEmitter {
                 this.promoVerifications.push(...info.promo_verifications);
 
                 this._isInit = true;
+
+                return this;
             });
     }
 
